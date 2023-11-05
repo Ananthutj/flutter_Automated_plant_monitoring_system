@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:syncfusion_flutter_gauges/gauges.dart';
 
 class DataDisplayScreen extends StatefulWidget {
   @override
@@ -12,7 +13,7 @@ class _DataDisplayScreenState extends State<DataDisplayScreen> {
 
   Future<Map<String, dynamic>> fetchDataFromThingSpeak() async {
     final response = await http.get(
-        Uri.parse('https://api.thingspeak.com/channels/2332099/feeds.json?api_key=31FCQSDRXNP2ATNZ'));
+        Uri.parse('https://api.thingspeak.com/channels/2332099/feeds.json?api_key=8PBPI7HYZJYIZRNC'));
 
     if (response.statusCode == 200) {
       final jsonResponse = json.decode(response.body);
@@ -33,8 +34,8 @@ class _DataDisplayScreenState extends State<DataDisplayScreen> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 150, 
-      child: ListView( 
+      height: 350, 
+      child: ListView(
         children: [
           FutureBuilder<Map<String, dynamic>>(
             future: latestData,
@@ -45,16 +46,115 @@ class _DataDisplayScreenState extends State<DataDisplayScreen> {
                 return Center(child: Text('Error: ${snapshot.error}'));
               } else if (snapshot.hasData) {
                 final data = snapshot.data!;
-                return ListTile(
-                  title: Text('Latest Entry'),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Temperature: ${data['field4']}'),
-                      Text('Soil Moisture: ${data['field5']}'),
-                      Text('Timestamp: ${data['created_at']}'),
-                    ],
-                  ),
+                final temperature = double.tryParse(data['field4'] ?? '0.0') ?? 0.0;
+                final soilMoisture = double.tryParse(data['field5'] ?? '0.0') ?? 0.0;
+
+                return Column(
+                  children: [
+                     ListTile(
+                      title: Text('Data from Crop'),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Temperature: ${data['field4']}'),
+                          Text('Soil Moisture: ${data['field5']}'),
+                          Text('Timestamp: ${data['created_at']}'),
+                        ],
+                      ),
+                    ),
+                    SfRadialGauge(
+                      title: GaugeTitle(text: 'Temperature'),
+                      axes: <RadialAxis>[
+                        RadialAxis(
+                          minimum: 0,
+                          maximum: 100,
+                          ranges: <GaugeRange>[
+                            GaugeRange(
+                              startValue: 0,
+                              endValue: 50,
+                              color: Colors.green,
+                            ),
+                            GaugeRange(
+                              startValue: 50,
+                              endValue: 100,
+                              color: Colors.orange,
+                            ),
+                            GaugeRange(
+                              startValue: 100,
+                              endValue: 150,
+                              color: Colors.red,
+                            ),
+                          ],
+                          pointers: <GaugePointer>[
+                            NeedlePointer(
+                              value: temperature,
+                              enableAnimation: true,
+                              animationType: AnimationType.ease,
+                              animationDuration: 1500,
+                            ),
+                          ],
+                          annotations: <GaugeAnnotation>[
+                            GaugeAnnotation(
+                              widget: Container(
+                                child: Text(
+                                  temperature.toStringAsFixed(1),
+                                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              angle: 90,
+                              positionFactor: 0.5,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    SfRadialGauge(
+                      title: GaugeTitle(text: 'Moisture'),
+                      axes: <RadialAxis>[
+                        RadialAxis(
+                          minimum: 0,
+                          maximum: 1000,
+                          ranges: <GaugeRange>[
+                            GaugeRange(
+                              startValue: 0,
+                              endValue: 500,
+                              color: Colors.red,
+                            ),
+                            GaugeRange(
+                              startValue: 500,
+                              endValue: 1000,
+                              color: Colors.green,
+                            ),
+                            // GaugeRange(
+                            //   startValue: 100,
+                            //   endValue: 150,
+                            //   color: Colors.blue,
+                            // ),
+                          ],
+                          pointers: <GaugePointer>[
+                            NeedlePointer(
+                              value: soilMoisture,
+                              enableAnimation: true,
+                              animationType: AnimationType.ease,
+                              animationDuration: 1500,
+                            ),
+                          ],
+                          annotations: <GaugeAnnotation>[
+                            GaugeAnnotation(
+                              widget: Container(
+                                child: Text(
+                                  soilMoisture.toStringAsFixed(1),
+                                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              angle: 90,
+                              positionFactor: 0.5,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
                 );
               } else {
                 return Center(child: Text('No data available'));
@@ -142,7 +242,7 @@ class _ControlPageState extends State<ControlPage> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        backgroundColor: Colors.amber[600],
+        backgroundColor: Color.fromARGB(255, 240, 230, 208),
         body: Container(
           child: Column(
             children: [
@@ -194,5 +294,3 @@ class _ControlPageState extends State<ControlPage> {
     );
   }
 }
-
-

@@ -38,6 +38,7 @@ dependencies:
   http: ^1.1.0
   provider: ^6.0.5
   line_chart: ^1.1.11
+  syncfusion_flutter_gauges: ^23.1.43
   
 
 dev_dependencies:

@@ -9,70 +9,60 @@ class CropsPage extends StatefulWidget {
 }
 
 class _CropsPageState extends State<CropsPage> {
+  void _showTomatoDetails() {
+    
+    showModalBottomSheet<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return InputDataScreen(); 
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFD8A818), 
+      backgroundColor: Color.fromARGB(255, 221, 204, 152),
       body: Container(
         child: Container(
           margin: EdgeInsets.only(top: 50),
-          
           child: Column(
-            
             children: [
-            Padding(
-              padding: EdgeInsets.all(20),
-              child: Row(
-                children: [
-                  Text("CROPS",style: TextStyle(fontSize: 30,color: Colors.white,fontWeight: FontWeight.w800),),
-                ],
+              Padding(
+                padding: EdgeInsets.all(20),
+                child: Row(
+                  children: [
+                    Text("CROPS", style: TextStyle(fontSize: 30, color: Colors.white, fontWeight: FontWeight.w800)),
+                  ],
+                ),
               ),
-            ),
-             Padding(
-               padding: const EdgeInsets.all(8.0),
-               child: Row(
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    CropCard(imagePath: 'assets/images/tomato.jpg', cropName: 'Tomato', onTap: _showTomatoDetails),
+                    CropCard(imagePath: 'assets/images/beans.jpg', cropName: 'Beans',onTap: _showTomatoDetails,),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    CropCard(imagePath: 'assets/images/chilly.jpg', cropName: 'Chilly',onTap: _showTomatoDetails),
+                    CropCard(imagePath: 'assets/images/brinjal.jpg', cropName: 'Brinjal',onTap: _showTomatoDetails,),
+                  ],
+                ),
+              ),
+              Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                   CropCard(
-                  imagePath: 'assets/images/tomato.jpg', 
-                  cropName: 'Tomato',
-                ),
-                CropCard(
-                  imagePath: 'assets/images/beans.jpg', 
-                  cropName: 'Beans',
-                ),
+                  CropCard(imagePath: 'assets/images/cauliflower.jpg', cropName: 'Cauliflower',onTap: _showTomatoDetails,),
+                  CropCard(imagePath: 'assets/images/cabbage.jpg', cropName: 'Cabbage',onTap: _showTomatoDetails,),
                 ],
-               ),
-             ),
-             Padding(
-               padding: const EdgeInsets.all(8.0),
-               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                   CropCard(
-                  imagePath: 'assets/images/chilly.jpg', 
-                  cropName: 'Chilly',
-                ),
-                CropCard(
-                  imagePath: 'assets/images/brinjal.jpg', 
-                  cropName: 'Brinjal',
-                ),
-                ],
-               ),
-             ),
-             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                 CropCard(
-                imagePath: 'assets/images/cauliflower.jpg', 
-                cropName: 'Cauliflower',
               ),
-              CropCard(
-                imagePath: 'assets/images/cabbage.jpg', 
-                cropName: 'Cabbage',
-              ),
-              ],
-             ),
             ],
           ),
         ),
@@ -88,7 +78,7 @@ class CropCard extends StatelessWidget {
 
   CropCard({
     required this.imagePath,
-    required this.cropName,
+    required this.cropName, required void Function() onTap,
   });
 
   @override
